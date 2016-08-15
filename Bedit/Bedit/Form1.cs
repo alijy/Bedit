@@ -15,6 +15,9 @@ namespace Bedit
         public Form1()
         {
             InitializeComponent();
+            Control firstTabPage = tabControl.GetControl(0);
+            firstTabPage.Text = "Heloo!";
+            tabPage2.Text = "Byeee!";
         }
     }
 }
