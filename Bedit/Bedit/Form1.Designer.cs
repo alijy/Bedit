@@ -55,17 +55,16 @@
             this.viewHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutBEditToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.textBox = new System.Windows.Forms.RichTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.label1 = new System.Windows.Forms.Label();
+            this.textBox = new System.Windows.Forms.RichTextBox();
+            this.lineLabel = new System.Windows.Forms.Label();
+            this.tabControl = new System.Windows.Forms.TabControl();
             this.menuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
-            this.tabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.tabControl.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -271,22 +270,6 @@
             this.aboutBEditToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.aboutBEditToolStripMenuItem.Text = "About bEdit          ";
             // 
-            // textBox
-            // 
-            this.textBox.AcceptsTab = true;
-            this.textBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox.BulletIndent = 3;
-            this.textBox.EnableAutoDragDrop = true;
-            this.textBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox.Location = new System.Drawing.Point(50, -2);
-            this.textBox.Name = "textBox";
-            this.textBox.ShortcutsEnabled = false;
-            this.textBox.Size = new System.Drawing.Size(721, 484);
-            this.textBox.TabIndex = 1;
-            this.textBox.TabStop = false;
-            this.textBox.Text = "asasdads\nasdasd\n\n\nasdas\nasd\n\nasdas\nd\n";
-            this.textBox.WordWrap = false;
-            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -303,22 +286,10 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
-            // tabControl
-            // 
-            this.tabControl.Controls.Add(this.tabPage1);
-            this.tabControl.Controls.Add(this.tabPage2);
-            this.tabControl.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tabControl.Location = new System.Drawing.Point(0, 24);
-            this.tabControl.Margin = new System.Windows.Forms.Padding(0);
-            this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(784, 513);
-            this.tabControl.TabIndex = 3;
-            // 
             // tabPage1
             // 
             this.tabPage1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.tabPage1.Controls.Add(this.label1);
+            this.tabPage1.Controls.Add(this.lineLabel);
             this.tabPage1.Controls.Add(this.textBox);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
@@ -328,28 +299,45 @@
             this.tabPage1.Text = "new 1";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // textBox
             // 
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(776, 487);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.textBox.AcceptsTab = true;
+            this.textBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox.BulletIndent = 3;
+            this.textBox.EnableAutoDragDrop = true;
+            this.textBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox.Location = new System.Drawing.Point(50, -2);
+            this.textBox.Name = "textBox";
+            this.textBox.ShortcutsEnabled = false;
+            this.textBox.Size = new System.Drawing.Size(721, 484);
+            this.textBox.TabIndex = 1;
+            this.textBox.TabStop = false;
+            this.textBox.Text = "asasdads\nasdasd\n\n\nasdas\nasd\n\nasdas\nd\n";
+            this.textBox.WordWrap = false;
             // 
-            // label1
+            // lineLabel
             // 
-            this.label1.BackColor = System.Drawing.Color.Lavender;
-            this.label1.Enabled = false;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.label1.Location = new System.Drawing.Point(-2, -2);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(46, 491);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7\r\n8\r\n9\r\n10\r\n11\r\n12\r\n13\r\n14\r\n15\r\n16\r\n17\r\n18\r\n19\r\n20";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lineLabel.BackColor = System.Drawing.Color.Lavender;
+            this.lineLabel.Enabled = false;
+            this.lineLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lineLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.lineLabel.Location = new System.Drawing.Point(-2, -2);
+            this.lineLabel.Name = "lineLabel";
+            this.lineLabel.Size = new System.Drawing.Size(46, 491);
+            this.lineLabel.TabIndex = 2;
+            this.lineLabel.Text = "1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7\r\n8\r\n9\r\n10\r\n11\r\n12\r\n13\r\n14\r\n15\r\n16\r\n17\r\n18\r\n19\r\n20";
+            this.lineLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // tabControl
+            // 
+            this.tabControl.Controls.Add(this.tabPage1);
+            this.tabControl.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tabControl.Location = new System.Drawing.Point(0, 24);
+            this.tabControl.Margin = new System.Windows.Forms.Padding(0);
+            this.tabControl.Name = "tabControl";
+            this.tabControl.SelectedIndex = 0;
+            this.tabControl.Size = new System.Drawing.Size(784, 513);
+            this.tabControl.TabIndex = 3;
             // 
             // Form1
             // 
@@ -366,8 +354,8 @@
             this.menuStrip.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            this.tabControl.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.tabControl.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -402,13 +390,12 @@
         private System.Windows.Forms.ToolStripMenuItem viewHelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem aboutBEditToolStripMenuItem;
-        private System.Windows.Forms.RichTextBox textBox;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lineLabel;
+        private System.Windows.Forms.RichTextBox textBox;
+        private System.Windows.Forms.TabControl tabControl;
     }
 }
 
