@@ -9,15 +9,16 @@ namespace Bedit
 {
     class Tab : TabPage
     {
-        public RichTextBox textBox;
-        Label lineLabel;
+        public TextBox textBox;
+        public Label lineLabel;
+        public string fileName;
 
         public Tab(TabControl tabControl) : base("new " + (tabControl.TabCount + 1))
         {
             this.SuspendLayout();
             this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.Location = new System.Drawing.Point(4, 22);
-            this.Name = "tabPage2";
+            this.Name = "tabPage" + tabControl.TabCount;
             this.Padding = new System.Windows.Forms.Padding(3);
             this.Size = new System.Drawing.Size(776, 487);
             this.TabIndex = 0;
@@ -52,11 +53,10 @@ namespace Bedit
 
         private void CreateTextBox()
         {
-            this.textBox = new RichTextBox();
+            this.textBox = new TextBox();
             this.textBox.AcceptsTab = true;
             this.textBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox.BulletIndent = 3;
-            this.textBox.EnableAutoDragDrop = true;
+            this.textBox.Multiline = true;
             this.textBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox.Location = new System.Drawing.Point(50, -2);
             this.textBox.Name = "textBox";
