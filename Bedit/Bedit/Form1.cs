@@ -14,42 +14,30 @@ namespace Bedit
     public partial class Form1 : Form
     {
         List<Tab> listOfTabs = new List<Tab>();
-        Tab newTab;
         Tab activeTab;
 
         public Form1()
         {
             InitializeComponent();
-            //Control firstTabPage = tabControl.GetControl(0);
-            //firstTabPage.Text = "Heloo!";
-           // tabPage1
-            //TabPage tp = new Tab(tabControl);
-            Tab newTab = new Tab(tabControl);
-            listOfTabs.Add(newTab);
-            tabControl.TabPages.Add(newTab);
-            listOfTabs[0].textBox.Text = "hello!\r\n\r\n\r\nbye!";
-            //this.ActiveControl = textBox;
-            //textBox.SelectionStart = textBox.Text.Length;
-            //this.ActiveControl = tabControl.TabPages[0];
-            tabControl.SelectTab(1);
-            this.ActiveControl = listOfTabs[0].textBox;
-            listOfTabs[0].textBox.SelectionStart = listOfTabs[0].textBox.Text.Length;
-
-
+            activeTab = CreateNewTab(tabControl, null, null);
+            timer1.Start();
         }
 
-        // make two copies of this; one with a filename and one without
-        // then for open file, use the former.
-        private Tab CreateNewTab(TabControl tabControl)
+        private Tab CreateNewTab(TabControl tabControl, string tabName, string fileName)
         {
-            Tab newTab = new Tab(tabControl);
+            Tab newTab = new Tab(tabControl, tabName, fileName);
+            this.Text = newTab.fileName + " - bEdit";
             activeTab = newTab;
             listOfTabs.Add(newTab);
             tabControl.TabPages.Add(newTab);
             tabControl.SelectTab(newTab.Name);
             this.ActiveControl = newTab.textBox;
-            newTab.textBox.SelectionStart = 0;
             return newTab;
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            activeTab = CreateNewTab(tabControl, null, null);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -57,20 +45,84 @@ namespace Bedit
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                Tab tab = CreateNewTab(tabControl);
-                tab.fileName = openFileDialog.FileName;
-                tab.textBox.Text = File.ReadAllText(openFileDialog.FileName);
-                tab.Text = openFileDialog.SafeFileName;
-                //tab.textBox.Text += "\r\n\r\n*** " + this.ActiveControl.ToString() + " ***";
-                //this.Text = openFileDialog.FileName + " - bEdit";
-                //filePath.Text = openFileDialog.FileName;
-                //textBox.select ;//(something that shows cursor status)
+                activeTab = CreateNewTab(tabControl, openFileDialog.SafeFileName, openFileDialog.FileName);
+                activeTab.fileName = openFileDialog.FileName;
+                activeTab.textBox.Text = File.ReadAllText(openFileDialog.FileName);
+                activeTab.Name = openFileDialog.SafeFileName;
             }
         }
 
         private void tabControl_Selected(object sender, TabControlEventArgs e)
         {
-            this.Text = activeTab.fileName + " - bEdit";
+            ;
         }
+
+        private void tabControl_Selecting(object sender, TabControlCancelEventArgs e)
+        {
+            activeTab = listOfTabs[tabControl.SelectedIndex];//***** change this back to [tabControl.activeIndex] after removing Test tab
+            this.ActiveControl = activeTab.textBox;
+            this.Text = activeTab.fileName + " - bEdit";
+            tabControl.SelectTab(activeTab.Name);
+            tabControl.SelectedTab = activeTab;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            int caretPosition = activeTab.textBox.SelectionStart;
+            //activeTab.caretRepositioned(caretPosition);
+            int line = NewLines(activeTab.textBox.Text.Substring(0, caretPosition)) + 1;
+            lnLabel.Text = "Ln : " + line;
+            int columnStart = activeTab.textBox.Text.Substring(0, caretPosition).LastIndexOf('\n');
+            colLabel.Text = "Col : " + (caretPosition - columnStart);
+            int selectedLines = (activeTab.textBox.SelectionLength > 0) ? NewLines(activeTab.textBox.SelectedText) + 1 : 0;
+            selLabel.Text = "Sel : " + (activeTab.textBox.SelectionLength) + " | " + selectedLines;
+            lengthLabel.Text = "Length : " + activeTab.textBox.Text.Length;
+            int numberOfLines = NewLines(activeTab.textBox.Text) + 1;
+            lineLabel.Text = "Line : " + (numberOfLines);
+            if (numberOfLines <= Tab.NUMBEROFLINESINTEXTBOX)
+            {
+                activeTab.lineStartNumber = 1;
+                DrawNumbers(1, numberOfLines);
+            }
+            else
+            {
+                if (line < activeTab.lineStartNumber)
+                {
+                    activeTab.lineStartNumber = line;
+                    DrawNumbers(line, line + Tab.NUMBEROFLINESINTEXTBOX - 1);
+                }
+                else if (line > activeTab.lineStartNumber + Tab.NUMBEROFLINESINTEXTBOX - 1)
+                {
+                    activeTab.lineStartNumber = line - Tab.NUMBEROFLINESINTEXTBOX + 1;
+                    DrawNumbers(activeTab.lineStartNumber, line);
+                }
+            }
+
+            //if (line < activeTab.lineStartNumber)
+            //{
+            //    for (int i = line; i < line + Tab.NUMBEROFLINESINTEXTBOX; i++)
+            //        activeTab.lineNumberBox.Text += (i + "\r\n");
+            //    //activeTab.lineNumberBox.Text += lineNum;
+            //}
+        }
+
+        private void DrawNumbers(int start, int end)
+        {
+            activeTab.lineNumberBox.Text = start.ToString();
+            for (int i = start + 1; i <= end; i++)
+                activeTab.lineNumberBox.Text += ("\r\n" + i);
+        }
+
+        private int NewLines(string text)
+        {
+            int newLines = 0;
+            foreach (char c in text)
+            {
+                if (c == '\n')
+                    newLines++;
+            }
+            return newLines;
+        }
+
     }
 }
