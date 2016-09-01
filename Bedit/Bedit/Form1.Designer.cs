@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -56,17 +57,16 @@
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutBEditToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.fileTypeLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.fileLengthLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.lineLabel = new System.Windows.Forms.Label();
-            this.textBox = new System.Windows.Forms.TextBox();
+            this.typeLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lengthLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lineLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lnLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.colLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.selLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl = new System.Windows.Forms.TabControl();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.menuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabControl.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -81,7 +81,8 @@
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(784, 24);
-            this.menuStrip.TabIndex = 0;
+            this.menuStrip.TabIndex = 1;
+            this.menuStrip.TabStop = true;
             this.menuStrip.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
@@ -106,6 +107,7 @@
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.newToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
@@ -276,97 +278,89 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileTypeLabel,
-            this.fileLengthLabel,
-            this.toolStripStatusLabel1});
+            this.typeLabel,
+            this.lengthLabel,
+            this.lineLabel,
+            this.lnLabel,
+            this.colLabel,
+            this.selLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 538);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(784, 24);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // fileTypeLabel
+            // typeLabel
             // 
-            this.fileTypeLabel.AutoSize = false;
-            this.fileTypeLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
-            this.fileTypeLabel.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
-            this.fileTypeLabel.Name = "fileTypeLabel";
-            this.fileTypeLabel.Size = new System.Drawing.Size(200, 19);
-            this.fileTypeLabel.Text = "Normal text file";
-            this.fileTypeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.typeLabel.AutoSize = false;
+            this.typeLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.typeLabel.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
+            this.typeLabel.Enabled = false;
+            this.typeLabel.Name = "typeLabel";
+            this.typeLabel.Size = new System.Drawing.Size(200, 19);
+            this.typeLabel.Text = "Normal text file";
+            this.typeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // fileLengthLabel
+            // lengthLabel
             // 
-            this.fileLengthLabel.AutoSize = false;
-            this.fileLengthLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
-            this.fileLengthLabel.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
-            this.fileLengthLabel.Name = "fileLengthLabel";
-            this.fileLengthLabel.Size = new System.Drawing.Size(200, 19);
-            this.fileLengthLabel.Text = "Length : 0          Line : 1";
-            this.fileLengthLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // toolStripStatusLabel1
-            // 
-            this.toolStripStatusLabel1.AutoSize = false;
-            this.toolStripStatusLabel1.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
-            this.toolStripStatusLabel1.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(200, 19);
-            this.toolStripStatusLabel1.Text = "Ln : 1          Col : 1          Sel : 0 | 0";
-            this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.tabPage1.Controls.Add(this.lineLabel);
-            this.tabPage1.Controls.Add(this.textBox);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(776, 487);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "new 1";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.lengthLabel.AutoSize = false;
+            this.lengthLabel.Name = "lengthLabel";
+            this.lengthLabel.Size = new System.Drawing.Size(90, 19);
+            this.lengthLabel.Text = "Length : 0";
+            this.lengthLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lineLabel
             // 
-            this.lineLabel.BackColor = System.Drawing.Color.Lavender;
-            this.lineLabel.Enabled = false;
-            this.lineLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lineLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.lineLabel.Location = new System.Drawing.Point(-2, -2);
+            this.lineLabel.AutoSize = false;
+            this.lineLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.lineLabel.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
             this.lineLabel.Name = "lineLabel";
-            this.lineLabel.Size = new System.Drawing.Size(46, 491);
-            this.lineLabel.TabIndex = 2;
-            this.lineLabel.Text = "1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7\r\n8\r\n9\r\n10\r\n11\r\n12\r\n13\r\n14\r\n15\r\n16\r\n17\r\n18\r\n19\r\n20";
-            this.lineLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lineLabel.Size = new System.Drawing.Size(90, 19);
+            this.lineLabel.Text = "Line : 1";
+            this.lineLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // textBox
+            // lnLabel
             // 
-            this.textBox.AcceptsTab = true;
-            this.textBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox.Location = new System.Drawing.Point(50, -2);
-            this.textBox.Multiline = true;
-            this.textBox.Name = "textBox";
-            this.textBox.ShortcutsEnabled = false;
-            this.textBox.Size = new System.Drawing.Size(721, 484);
-            this.textBox.TabIndex = 1;
-            this.textBox.TabStop = false;
-            this.textBox.Text = "asasdads\r\nasdasd\r\n\r\n\r\nasdas\r\nasd\r\n\r\nasdas\r\nd\r\n\r\nssasdsd\r\nasd";
-            this.textBox.WordWrap = false;
+            this.lnLabel.AutoSize = false;
+            this.lnLabel.Name = "lnLabel";
+            this.lnLabel.Size = new System.Drawing.Size(60, 19);
+            this.lnLabel.Text = "Ln : 1";
+            // 
+            // colLabel
+            // 
+            this.colLabel.AutoSize = false;
+            this.colLabel.Name = "colLabel";
+            this.colLabel.Size = new System.Drawing.Size(60, 19);
+            this.colLabel.Text = "Col : 1";
+            this.colLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // selLabel
+            // 
+            this.selLabel.AutoSize = false;
+            this.selLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.selLabel.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
+            this.selLabel.Name = "selLabel";
+            this.selLabel.Size = new System.Drawing.Size(90, 19);
+            this.selLabel.Text = "Sel : 0 | 0";
+            this.selLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // tabControl
             // 
-            this.tabControl.Controls.Add(this.tabPage1);
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControl.Location = new System.Drawing.Point(0, 24);
             this.tabControl.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(784, 513);
-            this.tabControl.TabIndex = 3;
+            this.tabControl.TabIndex = 0;
+            this.tabControl.TabStop = false;
+            this.tabControl.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabControl_Selecting);
             this.tabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl_Selected);
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 200;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
             // 
@@ -383,9 +377,6 @@
             this.menuStrip.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
-            this.tabControl.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -421,13 +412,14 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem aboutBEditToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel fileTypeLabel;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.Label lineLabel;
-        private System.Windows.Forms.TextBox textBox;
+        private System.Windows.Forms.ToolStripStatusLabel typeLabel;
+        private System.Windows.Forms.ToolStripStatusLabel lineLabel;
+        private System.Windows.Forms.ToolStripStatusLabel selLabel;
         private System.Windows.Forms.TabControl tabControl;
-        private System.Windows.Forms.ToolStripStatusLabel fileLengthLabel;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel lengthLabel;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.ToolStripStatusLabel lnLabel;
+        private System.Windows.Forms.ToolStripStatusLabel colLabel;
     }
 }
 
