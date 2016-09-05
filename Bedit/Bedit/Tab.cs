@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 // perform encapsulation
 
@@ -16,7 +17,6 @@ namespace Bedit
         public TextBox lineNumberBox;
         public const int NUMBEROFLINESINTEXTBOX = 30;
         public int lineStartNumber = 1;
-
         //public int number;
 
         public Tab(TabControl tabControl, string tabName, string fileName) : base()//("new " + (tabControl.TabCount + 1))
