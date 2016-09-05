@@ -218,13 +218,26 @@ namespace Bedit
 
         private void Menu_Undo(object sender, EventArgs e)
         {
-            // Determine if last operation can be undone in text box.   
-            if (activeTab.textBox.CanUndo == true)
+            #region a simple single-use undo
+            //// Determine if last operation can be undone in text box.   
+            //if (activeTab.textBox.CanUndo == true)
+            //{
+            //    // Undo the last operation.
+            //    activeTab.textBox.Undo();
+            //    // Clear the undo buffer to prevent last action from being redone.
+            //    activeTab.textBox.ClearUndo();
+            //}
+            //// Determine if last operation can be undone in text box.
+            #endregion
+            if (activeTab.textVersionChanges.Count > 1)
             {
-                // Undo the last operation.
-                activeTab.textBox.Undo();
-                // Clear the undo buffer to prevent last action from being redone.
-                activeTab.textBox.ClearUndo();
+                // Save the caret location to put it back where it was.
+                int caretLocation = activeTab.textBox.SelectionStart;
+                // Undo the last operation. The first pop takes out what textBox_TextChanged puts in when undo is performed.
+                activeTab.textVersionChanges.Pop();
+                activeTab.textBox.Text = activeTab.textVersionChanges.Pop();
+                // Put the caret back where it was. It moves to the last possible location if the saved location no longer exists.
+                activeTab.textBox.SelectionStart = caretLocation;
             }
         }
 

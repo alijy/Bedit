@@ -17,6 +17,7 @@ namespace Bedit
         public TextBox lineNumberBox;
         public const int NUMBEROFLINESINTEXTBOX = 30;
         public int lineStartNumber = 1;
+        public Stack<string> textVersionChanges = new Stack<string>(5);
         //public int number;
 
         public Tab(TabControl tabControl, string tabName, string fileName) : base()//("new " + (tabControl.TabCount + 1))
@@ -101,18 +102,7 @@ namespace Bedit
         {
             if (NewLines(textBox.Text) + 1 > NUMBEROFLINESINTEXTBOX)
                 this.textBox.ScrollBars = ScrollBars.Vertical;
-            //lineNumberBox.Text = null;
-            //lineStartNumber = 1;
-            //int lineNum = NewLines(textBox.Text) + 1;
-            //if (lineNum > NUMBEROFLINESINTEXTBOX)
-            //{
-            //    lineStartNumber = lineNum - NUMBEROFLINESINTEXTBOX + 1;
-            //    this.textBox.ScrollBars = ScrollBars.Vertical;
-            //}
-            //for (int i = lineStartNumber; i < lineNum; i++)
-            //    lineNumberBox.Text += (i + "\r\n");
-            //    //lineNumberBox.AppendText("\r\n" + (i + 2));
-            //lineNumberBox.Text += lineNum;
+            textVersionChanges.Push(textBox.Text);
         }
 
         private int NewLines(string text)
