@@ -37,18 +37,17 @@ namespace Bedit
             return newTab;
         }
 
-        private void tabControl_Selected(object sender, TabControlEventArgs e)
-        {
-            ;
-        }
-
         private void tabControl_Selecting(object sender, TabControlCancelEventArgs e)
         {
-            activeTab = listOfTabs[tabControl.SelectedIndex];
-            this.ActiveControl = activeTab.textBox;
-            this.Text = activeTab.fileName + " - bEdit";
-            tabControl.SelectTab(activeTab.Name);
-            tabControl.SelectedTab = activeTab;
+            if (listOfTabs.Count > 0)
+            {
+                activeTab = listOfTabs[tabControl.SelectedIndex];
+                this.ActiveControl = activeTab.textBox;
+                this.Text = activeTab.fileName + " - bEdit";
+                tabControl.SelectTab(activeTab.Name);
+                tabControl.SelectedTab = activeTab;
+                this.readOnlyCheck.Checked = activeTab.textBox.ReadOnly;
+            }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -81,13 +80,6 @@ namespace Bedit
                     DrawNumbers(activeTab.lineStartNumber, line);
                 }
             }
-
-            //if (line < activeTab.lineStartNumber)
-            //{
-            //    for (int i = line; i < line + Tab.NUMBEROFLINESINTEXTBOX; i++)
-            //        activeTab.lineNumberBox.Text += (i + "\r\n");
-            //    //activeTab.lineNumberBox.Text += lineNum;
-            //}
         }
 
         private void DrawNumbers(int start, int end)
@@ -137,7 +129,7 @@ namespace Bedit
                 {
                     writer.Write(activeTab.textBox.Text);
                 }
-
+                activeTab.saved = true;
             }
         }
 
@@ -172,6 +164,7 @@ namespace Bedit
                 this.Text = activeTab.fileName + " - bEdit";
                 activeTab.Text = Path.GetFileName(saveFileDialog.FileName);
             }
+            activeTab.saved = true;
         }
 
         private void Menu_PageSetup(object sender, EventArgs e)
@@ -195,7 +188,7 @@ namespace Bedit
                 printDocument.Print();
         }
 
-        // ***** work more on this later *****
+        // ***** more work on this later *****
         private void document_PrintPage(object sender, PrintPageEventArgs e)
         {
             // Insert code to render the page here.
@@ -229,13 +222,27 @@ namespace Bedit
             //}
             //// Determine if last operation can be undone in text box.
             #endregion
-            if (activeTab.textVersionChanges.Count > 1)
+            if (activeTab.undoStack.Count > 1)
             {
                 // Save the caret location to put it back where it was.
                 int caretLocation = activeTab.textBox.SelectionStart;
-                // Undo the last operation. The first pop takes out what textBox_TextChanged puts in when undo is performed.
-                activeTab.textVersionChanges.Pop();
-                activeTab.textBox.Text = activeTab.textVersionChanges.Pop();
+                // Undo the last change. The first pop takes out what textBox_TextChanged puts in when undo is performed.
+                activeTab.redoStack.Push(activeTab.undoStack.Pop());
+                activeTab.textBox.Text = activeTab.undoStack.Pop();
+                // Put the caret back where it was. It moves to the last possible location if the saved location no longer exists.
+                activeTab.textBox.SelectionStart = caretLocation;
+            }
+        }
+
+        private void Menu_Redo(object sender, EventArgs e)
+        {
+            if (activeTab.redoStack.Count > 0)
+            {
+                // Save the caret location to put it back where it was.
+                int caretLocation = activeTab.textBox.SelectionStart;
+                // Redo the last change. The first pop pushes text back to undoStack and 2nd pop removes the push done by textChanged event.
+                activeTab.undoStack.Push(activeTab.redoStack.Pop());
+                activeTab.textBox.Text = activeTab.undoStack.Pop();
                 // Put the caret back where it was. It moves to the last possible location if the saved location no longer exists.
                 activeTab.textBox.SelectionStart = caretLocation;
             }
@@ -279,6 +286,145 @@ namespace Bedit
         private void Menu_Delete(object sender, EventArgs e)
         {
             activeTab.textBox.SelectedText = "";
+        }
+
+        private void Menu_Font(object sender, EventArgs e)
+        {
+            FontDialog fontDialog = new FontDialog();
+            fontDialog.Font = activeTab.textBox.Font;
+            fontDialog.ShowDialog();
+            activeTab.textBox.Font = fontDialog.Font;
+            //activeTab.lineNumberBox.Font = fontDialog.Font;
+            activeTab.lineNumberBox.Font = new Font(fontDialog.Font.Name, fontDialog.Font.Size, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+        }
+
+        private void Menu_StatusBar(object sender, EventArgs e)
+        {
+            statusStrip.Visible = statusBarCheck.Checked;
+        }
+
+        private void Menu_About(object sender, EventArgs e)
+        {
+            AboutBox aboutBox = new AboutBox();
+            aboutBox.Show();
+        }
+
+        private void Menu_Close(object sender, EventArgs e)
+        {
+            listOfTabs.Remove(activeTab);
+            tabControl.TabPages.Remove(activeTab);
+            if (listOfTabs.Count == 0)
+                activeTab = CreateNewTab(tabControl, null, null);
+        }
+
+        private void Menu_CloseAll(object sender, EventArgs e)
+        {
+            listOfTabs.Clear();
+            tabControl.TabPages.Clear();
+            activeTab = CreateNewTab(tabControl, null, null);
+        }
+
+        private void Menu_CloseAllButActive(object sender, EventArgs e)
+        {
+            for (int i = listOfTabs.Count - 1 ; i >= 0 ; i--)
+            {
+                if (listOfTabs[i] != activeTab)
+                {
+                    listOfTabs.Remove(listOfTabs[i]);
+                    tabControl.TabPages.RemoveAt(i);
+                }
+            }
+        }
+
+        private void Menu_CloseLeft(object sender, EventArgs e)
+        {
+            int indexOfActiveTab = listOfTabs.IndexOf(activeTab);
+            for (int i = indexOfActiveTab - 1 ; i >= 0 ; i--)
+            {
+                listOfTabs.RemoveAt(i);
+                tabControl.TabPages.RemoveAt(i);
+            }
+        }
+
+        private void Menu_CloseRight(object sender, EventArgs e)
+        {
+            int indexOfActiveTab = listOfTabs.IndexOf(activeTab);
+            for (int i = listOfTabs.Count - 1 ; i > indexOfActiveTab ; i--)
+            {
+                listOfTabs.RemoveAt(i);
+                tabControl.TabPages.RemoveAt(i);
+            }
+        }
+
+        private void Menu_SelectAll(object sender, EventArgs e)
+        {
+            activeTab.textBox.SelectAll();
+        }
+
+        private void Menu_ReadOnly(object sender, EventArgs e)
+        {
+            activeTab.textBox.ReadOnly = readOnlyCheck.Checked;
+        }
+
+        private void TabSelect(int index)
+        {
+            if (index < listOfTabs.Count && index >= 0)
+                tabControl.SelectTab(index);
+        }
+
+        private void Menu_Tab1(object sender, EventArgs e)
+        {
+            TabSelect(0);
+        }
+
+        private void Menu_Tab2(object sender, EventArgs e)
+        {
+            TabSelect(1);
+        }
+
+        private void Menu_Tab3(object sender, EventArgs e)
+        {
+            TabSelect(2);
+        }
+
+        private void Menu_Tab4(object sender, EventArgs e)
+        {
+            TabSelect(3);
+        }
+
+        private void Menu_Tab5(object sender, EventArgs e)
+        {
+            TabSelect(4);
+        }
+
+        private void Menu_Tab6(object sender, EventArgs e)
+        {
+            TabSelect(5);
+        }
+
+        private void Menu_Tab7(object sender, EventArgs e)
+        {
+            TabSelect(6);
+        }
+
+        private void Menu_Tab8(object sender, EventArgs e)
+        {
+            TabSelect(7);
+        }
+
+        private void Menu_Tab9(object sender, EventArgs e)
+        {
+            TabSelect(8);
+        }
+
+        private void Menu_NextTab(object sender, EventArgs e)
+        {
+            TabSelect(listOfTabs.IndexOf(activeTab) + 1);
+        }
+
+        private void Menu_PreviousTab(object sender, EventArgs e)
+        {
+            TabSelect(listOfTabs.IndexOf(activeTab) - 1);
         }
     }
 }

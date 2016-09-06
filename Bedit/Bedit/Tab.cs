@@ -17,7 +17,9 @@ namespace Bedit
         public TextBox lineNumberBox;
         public const int NUMBEROFLINESINTEXTBOX = 30;
         public int lineStartNumber = 1;
-        public Stack<string> textVersionChanges = new Stack<string>(5);
+        public Stack<string> undoStack = new Stack<string>();
+        public Stack<string> redoStack = new Stack<string>();
+        public bool saved = true;
         //public int number;
 
         public Tab(TabControl tabControl, string tabName, string fileName) : base()//("new " + (tabControl.TabCount + 1))
@@ -35,6 +37,7 @@ namespace Bedit
             CreateContent();
             this.Controls.Add(lineNumberBox);
             this.Controls.Add(textBox);
+            undoStack.Push("");
         }
 
         private string NewTabName(TabControl tabControl)
@@ -77,16 +80,16 @@ namespace Bedit
             this.textBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox.Multiline = true;
             this.textBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox.Location = new System.Drawing.Point(50, -2);
+            this.textBox.Location = new System.Drawing.Point(50, 0);
             this.textBox.Name = "textBox";// + number;
             this.textBox.ShortcutsEnabled = false;
-            this.textBox.Size = new System.Drawing.Size(721, 484);
+            this.textBox.Size = new System.Drawing.Size(721, 483);
             this.textBox.TabIndex = 0;
             this.textBox.TabStop = false;
             this.textBox.WordWrap = false;
             this.textBox.TextChanged += new System.EventHandler(this.textBox_TextChanged);
             //this.textBox.Select();
-
+            
         }
 
         //public void caretRepositioned(int position)
@@ -100,9 +103,13 @@ namespace Bedit
 
         private void textBox_TextChanged(object sender, EventArgs e)
         {
+            //*********** distinguish saved from unsaved file
+            this.saved = false;
+            this.ForeColor = System.Drawing.Color.Red;
+
             if (NewLines(textBox.Text) + 1 > NUMBEROFLINESINTEXTBOX)
                 this.textBox.ScrollBars = ScrollBars.Vertical;
-            textVersionChanges.Push(textBox.Text);
+            undoStack.Push(textBox.Text);
         }
 
         private int NewLines(string text)
