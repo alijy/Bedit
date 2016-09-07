@@ -32,12 +32,14 @@ namespace Bedit
             activeTab = newTab;
             listOfTabs.Add(newTab);
             tabControl.TabPages.Add(newTab);
+            WindowMenuModifier(newTab);
             tabControl.SelectTab(newTab.Name);
             this.ActiveControl = newTab.textBox;
             return newTab;
         }
 
-        private void tabControl_Selecting(object sender, TabControlCancelEventArgs e)
+        private void tabControl_Selected(object sender, TabControlEventArgs e)
+//        private void tabControl_Selected(object sender, TabControlCancelEventArgs e)
         {
             if (listOfTabs.Count > 0)
             {
@@ -47,6 +49,7 @@ namespace Bedit
                 tabControl.SelectTab(activeTab.Name);
                 tabControl.SelectedTab = activeTab;
                 this.readOnlyCheck.Checked = activeTab.textBox.ReadOnly;
+                UncheckWindowMenuItems(listOfTabs.IndexOf(activeTab));
             }
         }
 
@@ -426,5 +429,35 @@ namespace Bedit
         {
             TabSelect(listOfTabs.IndexOf(activeTab) - 1);
         }
+
+        private void WindowMenuModifier(Tab tab)
+        {
+            ToolStripMenuItem item = new ToolStripMenuItem();
+            item.Checked = true;
+            item.CheckOnClick = true;
+            item.CheckState = CheckState.Checked;
+            item.Name = tab.Name;
+            item.Size = new Size(156, 22);
+            item.Text = listOfTabs.IndexOf(tab)+1 + ": " + tab.Name + "          ";
+            item.Click += new EventHandler(Menu_WindowItems);
+            windowMenu.DropDownItems.Add(item);
+        }
+        //TODO: Modify Close, CloseAll, etc to handle closed window menu items.
+        private void UncheckWindowMenuItems(int index)
+        {
+            ToolStripMenuItem item = (ToolStripMenuItem)windowMenu.DropDownItems[index];
+            foreach (ToolStripMenuItem tabItem in windowMenu.DropDownItems)
+            {
+                if (tabItem != item)
+                    tabItem.Checked = false;
+            }
+        }
+
+        private void Menu_WindowItems(object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = (ToolStripMenuItem) sender;
+            TabSelect(windowMenu.DropDownItems.IndexOf(item));
+        }
+
     }
 }
