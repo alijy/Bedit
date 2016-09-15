@@ -38,6 +38,7 @@ namespace Bedit
             this.Controls.Add(lineNumberBox);
             this.Controls.Add(textBox);
             undoStack.Push("");
+            
         }
 
         private string NewTabName(TabControl tabControl)

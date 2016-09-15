@@ -39,7 +39,6 @@ namespace Bedit
         }
 
         private void tabControl_Selected(object sender, TabControlEventArgs e)
-//        private void tabControl_Selected(object sender, TabControlCancelEventArgs e)
         {
             if (listOfTabs.Count > 0)
             {
@@ -49,7 +48,7 @@ namespace Bedit
                 tabControl.SelectTab(activeTab.Name);
                 tabControl.SelectedTab = activeTab;
                 this.readOnlyCheck.Checked = activeTab.textBox.ReadOnly;
-                UncheckWindowMenuItems(listOfTabs.IndexOf(activeTab));
+                UpdateWindowMenuItemsChecks();
             }
         }
 
@@ -113,11 +112,29 @@ namespace Bedit
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                activeTab = CreateNewTab(tabControl, openFileDialog.SafeFileName, openFileDialog.FileName);
-                activeTab.fileName = openFileDialog.FileName;
-                activeTab.textBox.Text = File.ReadAllText(openFileDialog.FileName);
-                activeTab.Name = openFileDialog.SafeFileName;
+                int tabNumber = IsFileOpen(openFileDialog.SafeFileName);
+                if (tabNumber >= 0)
+                {
+                    TabSelect(tabNumber);
+                }
+                else
+                {
+                    activeTab = CreateNewTab(tabControl, openFileDialog.SafeFileName, openFileDialog.FileName);
+                    activeTab.fileName = openFileDialog.FileName;
+                    activeTab.textBox.Text = File.ReadAllText(openFileDialog.FileName);
+                    activeTab.Name = openFileDialog.SafeFileName;
+                }
             }
+        }
+
+        private int IsFileOpen(string fileName)
+        {
+            foreach (Tab tab in listOfTabs)
+            {
+                if (tab.Name == fileName)
+                    return listOfTabs.IndexOf(tab);
+            }
+            return -1;
         }
 
         private void Menu_Save(object sender, EventArgs e)
@@ -166,8 +183,10 @@ namespace Bedit
                 activeTab.fileName = saveFileDialog.FileName;
                 this.Text = activeTab.fileName + " - bEdit";
                 activeTab.Text = Path.GetFileName(saveFileDialog.FileName);
+
+                activeTab.saved = true;
+                WindowMenuDisplay();
             }
-            activeTab.saved = true;
         }
 
         private void Menu_PageSetup(object sender, EventArgs e)
@@ -316,6 +335,7 @@ namespace Bedit
         {
             listOfTabs.Remove(activeTab);
             tabControl.TabPages.Remove(activeTab);
+            WindowMenuDisplay();
             if (listOfTabs.Count == 0)
                 activeTab = CreateNewTab(tabControl, null, null);
         }
@@ -324,6 +344,7 @@ namespace Bedit
         {
             listOfTabs.Clear();
             tabControl.TabPages.Clear();
+            WindowMenuDisplay();
             activeTab = CreateNewTab(tabControl, null, null);
         }
 
@@ -337,6 +358,7 @@ namespace Bedit
                     tabControl.TabPages.RemoveAt(i);
                 }
             }
+            WindowMenuDisplay();
         }
 
         private void Menu_CloseLeft(object sender, EventArgs e)
@@ -347,6 +369,7 @@ namespace Bedit
                 listOfTabs.RemoveAt(i);
                 tabControl.TabPages.RemoveAt(i);
             }
+            WindowMenuDisplay();
         }
 
         private void Menu_CloseRight(object sender, EventArgs e)
@@ -357,6 +380,7 @@ namespace Bedit
                 listOfTabs.RemoveAt(i);
                 tabControl.TabPages.RemoveAt(i);
             }
+            WindowMenuDisplay();
         }
 
         private void Menu_SelectAll(object sender, EventArgs e)
@@ -430,32 +454,50 @@ namespace Bedit
             TabSelect(listOfTabs.IndexOf(activeTab) - 1);
         }
 
+        private void WindowMenuDisplay()
+        {
+            windowMenu.DropDownItems.Clear();
+            foreach (Tab tab in listOfTabs)
+                WindowMenuModifier(tab);
+        }
+
         private void WindowMenuModifier(Tab tab)
         {
             ToolStripMenuItem item = new ToolStripMenuItem();
-            item.Checked = true;
+            if (tab == activeTab)
+            {
+                item.Checked = true;
+                item.CheckState = CheckState.Checked;
+            }
+            else
+            {
+                item.Checked = false;
+                item.CheckState = CheckState.Unchecked;
+            }
             item.CheckOnClick = true;
-            item.CheckState = CheckState.Checked;
             item.Name = tab.Name;
             item.Size = new Size(156, 22);
-            item.Text = listOfTabs.IndexOf(tab)+1 + ": " + tab.Name + "          ";
+            item.Text = listOfTabs.IndexOf(tab)+1 + ": " + tab.Text + "          ";
             item.Click += new EventHandler(Menu_WindowItems);
             windowMenu.DropDownItems.Add(item);
         }
-        //TODO: Modify Close, CloseAll, etc to handle closed window menu items.
-        private void UncheckWindowMenuItems(int index)
+
+        private void UpdateWindowMenuItemsChecks()
         {
-            ToolStripMenuItem item = (ToolStripMenuItem)windowMenu.DropDownItems[index];
+            ToolStripMenuItem item = (ToolStripMenuItem)windowMenu.DropDownItems[listOfTabs.IndexOf(activeTab)];
             foreach (ToolStripMenuItem tabItem in windowMenu.DropDownItems)
             {
                 if (tabItem != item)
                     tabItem.Checked = false;
+                else
+                    tabItem.Checked = true;
             }
         }
 
         private void Menu_WindowItems(object sender, EventArgs e)
         {
             ToolStripMenuItem item = (ToolStripMenuItem) sender;
+            item.Checked = true;
             TabSelect(windowMenu.DropDownItems.IndexOf(item));
         }
 
