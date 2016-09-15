@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("bEdit")]
-[assembly: AssemblyDescription("bEdit is a simple, easy to use, multi-tab text editor. The aim behind building bEdit was to provide a simple editor similar to 'Notepad' with multi-tab option. bEdit also benefits from extra menu options that make the editing of text files simpler and faster at the same time.")]
+[assembly: AssemblyDescription("bEdit is a simple, easy to use, multi-tab text editor. The aim behind building bEdit was to provide a simple editor similar to 'Notepad' with multi-tab option.\r\n\r\nbEdit also benefits from extra menu options that make the editing of text files simpler and faster at the same time.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Ali Karami")]
 [assembly: AssemblyProduct("bEdit Text Editor")]
