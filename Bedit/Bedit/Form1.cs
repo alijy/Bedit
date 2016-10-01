@@ -16,13 +16,16 @@ namespace Bedit
     {
         List<Tab> listOfTabs = new List<Tab>();
         Tab activeTab;
+        Stack<Tab> activeTabStack = new Stack<Tab>();
         private PrintDocument printDocument = new PrintDocument();
+        Image closeImage, closeImageAct;
 
         public Form1()
         {
             InitializeComponent();
             activeTab = CreateNewTab(tabControl, null, null);
             timer1.Start();
+            activeTabStack.Push(activeTab);
         }
 
         private Tab CreateNewTab(TabControl tabControl, string tabName, string fileName)
@@ -43,12 +46,14 @@ namespace Bedit
             if (listOfTabs.Count > 0)
             {
                 activeTab = listOfTabs[tabControl.SelectedIndex];
-                this.ActiveControl = activeTab.textBox;
-                this.Text = activeTab.fileName + " - bEdit";
+                ActiveControl = activeTab.textBox;
+                Text = activeTab.fileName + " - bEdit";
                 tabControl.SelectTab(activeTab.Name);
                 tabControl.SelectedTab = activeTab;
-                this.readOnlyCheck.Checked = activeTab.textBox.ReadOnly;
+                readOnlyCheck.Checked = activeTab.textBox.ReadOnly;
                 UpdateWindowMenuItemsChecks();
+                tabControl.Invalidate();
+                activeTabStack.Push(activeTab);
             }
         }
 
@@ -501,5 +506,66 @@ namespace Bedit
             TabSelect(windowMenu.DropDownItems.IndexOf(item));
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            Size closeButtonSize = new Size(12, 12);
+            closeImageAct = new Bitmap(bEdit.Properties.Resources.red_button, closeButtonSize);
+            closeImage = new Bitmap(bEdit.Properties.Resources.gray_button, closeButtonSize);
+
+            tabControl.Padding = new Point(30);
+        }
+
+        private void tabControl_MouseClick(object sender, MouseEventArgs e)
+        {
+            for (int i = listOfTabs.Count - 1; i >= 0; i--)
+            {
+                Rectangle rect = tabControl.GetTabRect(i);
+                Rectangle imageRect = new Rectangle(rect.Right - closeImage.Width - 5, rect.Top + (rect.Height - closeImage.Height) / 2,
+                    closeImage.Width, closeImage.Height);
+
+                if (imageRect.Contains(e.Location))
+                {
+                    activeTabStack.Pop();
+                    while (activeTabStack.Count > 0 && !listOfTabs.Contains(activeTabStack.Peek()))
+                        activeTabStack.Pop();
+                    if (activeTabStack.Count > 0)
+                        tabControl.SelectTab(listOfTabs.IndexOf(activeTabStack.Pop()));
+                    listOfTabs.RemoveAt(i);
+                    tabControl.TabPages.RemoveAt(i);
+                    WindowMenuDisplay();
+                    if (listOfTabs.Count == 0)
+                    {
+                        activeTab = CreateNewTab(tabControl, null, null);
+                        activeTabStack.Push(activeTab);
+                    }
+                }
+            }
+        }
+
+        private void tabControl_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            Rectangle rect = tabControl.GetTabRect(e.Index);
+            Rectangle imageRect = new Rectangle(rect.Right - closeImage.Width - 5, rect.Top + (rect.Height - closeImage.Height) / 2,
+                closeImage.Width, closeImage.Height);
+
+            Font font;
+            Brush blackBrush = Brushes.Blue;
+            Brush grayBrush = Brushes.Gray;
+            StringFormat strF = new StringFormat(StringFormat.GenericDefault);
+
+            if (activeTab == tabControl.TabPages[e.Index])
+            {
+                e.Graphics.DrawImage(closeImageAct, imageRect);
+                font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular);
+                e.Graphics.DrawString(tabControl.TabPages[e.Index].Text, font, blackBrush, rect, strF);
+            }
+            else
+            {
+                e.Graphics.DrawImage(closeImage, imageRect);
+                font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular);
+                e.Graphics.DrawString(tabControl.TabPages[e.Index].Text, font, grayBrush, rect, strF);
+            }
+
+        }
     }
 }

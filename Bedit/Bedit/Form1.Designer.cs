@@ -625,6 +625,7 @@
             // tabControl
             // 
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tabControl.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             this.tabControl.Location = new System.Drawing.Point(0, 24);
             this.tabControl.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl.Name = "tabControl";
@@ -632,7 +633,9 @@
             this.tabControl.Size = new System.Drawing.Size(784, 513);
             this.tabControl.TabIndex = 0;
             this.tabControl.TabStop = false;
+            this.tabControl.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControl_DrawItem);
             this.tabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl_Selected);
+            this.tabControl.MouseClick += new System.Windows.Forms.MouseEventHandler(this.tabControl_MouseClick);
             // 
             // timer1
             // 
@@ -655,6 +658,7 @@
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "bEdit";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.statusStrip.ResumeLayout(false);

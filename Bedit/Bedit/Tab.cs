@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Drawing;
 
-// perform encapsulation
 
 namespace Bedit
 {
@@ -20,7 +20,6 @@ namespace Bedit
         public Stack<string> undoStack = new Stack<string>();
         public Stack<string> redoStack = new Stack<string>();
         public bool saved = true;
-        //public int number;
 
         public Tab(TabControl tabControl, string tabName, string fileName) : base()//("new " + (tabControl.TabCount + 1))
         {
@@ -28,7 +27,6 @@ namespace Bedit
             this.Name = (tabName == null) ? NewTabName(tabControl) : tabName;
             this.Text = this.Name;
             this.fileName = (fileName == null) ? this.Text : fileName;
-            //this.number = tabControl.TabCount + 1;
             this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.Location = new System.Drawing.Point(4, 22);
             this.Padding = new System.Windows.Forms.Padding(3);
@@ -38,7 +36,6 @@ namespace Bedit
             this.Controls.Add(lineNumberBox);
             this.Controls.Add(textBox);
             undoStack.Push("");
-            
         }
 
         private string NewTabName(TabControl tabControl)
@@ -82,25 +79,15 @@ namespace Bedit
             this.textBox.Multiline = true;
             this.textBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox.Location = new System.Drawing.Point(50, 0);
-            this.textBox.Name = "textBox";// + number;
+            this.textBox.Name = "textBox";
             this.textBox.ShortcutsEnabled = false;
             this.textBox.Size = new System.Drawing.Size(721, 483);
             this.textBox.TabIndex = 0;
             this.textBox.TabStop = false;
             this.textBox.WordWrap = false;
             this.textBox.TextChanged += new System.EventHandler(this.textBox_TextChanged);
-            //this.textBox.Select();
             
         }
-
-        //public void caretRepositioned(int position)
-        //{
-        //    if (position == 10 && positionFlag == false)
-        //    {
-        //        positionFlag = true;
-        //        MessageBox.Show("position is: " + position);
-        //    }
-        //}
 
         private void textBox_TextChanged(object sender, EventArgs e)
         {
