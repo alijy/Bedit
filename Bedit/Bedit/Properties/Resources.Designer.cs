@@ -61,6 +61,36 @@ namespace bEdit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon _02de0db4_cadd_4294_8ec1_2b532c46f162 {
+            get {
+                object obj = ResourceManager.GetObject("_02de0db4_cadd_4294_8ec1_2b532c46f162", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon cdaee2e3_9124_4845_90ab_b53bbce30615 {
+            get {
+                object obj = ResourceManager.GetObject("cdaee2e3_9124_4845_90ab_b53bbce30615", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cdaee2e3_9124_4845_90ab_b53bbce306151 {
+            get {
+                object obj = ResourceManager.GetObject("cdaee2e3_9124_4845_90ab_b53bbce306151", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap gray_button {
