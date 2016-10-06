@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
-using System.Drawing;
 
 
 namespace Bedit
 {
+    /// <summary>
+    /// An inherited class from 'TabPage' base class.
+    /// It adds textboxes and other features to the TabPage class to provide a complete editing tab for the editor.
+    /// </summary>
     class Tab : TabPage
     {
+        private TabControl tabControl;
         public TextBox textBox;
         public string fileName;
         public TextBox lineNumberBox;
@@ -21,9 +21,16 @@ namespace Bedit
         public Stack<string> redoStack = new Stack<string>();
         public bool saved = true;
 
-        public Tab(TabControl tabControl, string tabName, string fileName) : base()//("new " + (tabControl.TabCount + 1))
+        /// <summary>
+        /// Initializes a new instance of the Tab class and specifies the text for the tab.
+        /// </summary>
+        /// <param name="tabControl">The instance of TabControl class that the tab is being added to.</param>
+        /// <param name="tabName">The name and text for the tab. It can be null in which case a numbered name will be generated for it.</param>
+        /// <param name="fileName">The name of the opened file. It can be null in which case it is equal to tab name.</param>
+        public Tab(TabControl tabControl, string tabName, string fileName) : base()
         {
-       //     this.SuspendLayout();//******remove this!******//
+            //this.SuspendLayout();
+            this.tabControl = tabControl;
             this.Name = (tabName == null) ? NewTabName(tabControl) : tabName;
             this.Text = this.Name;
             this.fileName = (fileName == null) ? this.Text : fileName;
@@ -32,12 +39,15 @@ namespace Bedit
             this.Padding = new System.Windows.Forms.Padding(3);
             this.Size = new System.Drawing.Size(776, 487);
             this.UseVisualStyleBackColor = true;
-            CreateContent();
-            this.Controls.Add(lineNumberBox);
-            this.Controls.Add(textBox);
+            LoadContent();
             undoStack.Push("");
         }
 
+        /// <summary>
+        /// Generates a new and unique tab name in the form of 'new X'.
+        /// </summary>
+        /// <param name="tabControl">The instance of TabControl that the tab is being added to.</param>
+        /// <returns></returns>
         private string NewTabName(TabControl tabControl)
         {
             int counter = 1;
@@ -46,13 +56,19 @@ namespace Bedit
             return ("new " + counter);
         }
 
-        private void CreateContent()
+        /// <summary>
+        /// Creates and adds the controls of the tab.
+        /// </summary>
+        private void LoadContent()
         {
-            CreateLineNumberBox();
-            CreateTextBox();
+            LoadLineNumberBox();
+            LoadTextBox();
         }
 
-        private void CreateLineNumberBox()
+        /// <summary>
+        /// Creates and adds a textbox control to the tab for line numbers.
+        /// </summary>
+        private void LoadLineNumberBox()
         {
             this.lineNumberBox = new TextBox();
             this.lineNumberBox.BackColor = System.Drawing.SystemColors.ControlLight;
@@ -67,11 +83,13 @@ namespace Bedit
             this.lineNumberBox.TabIndex = 0;
             this.lineNumberBox.Text = "1";
             this.lineNumberBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            
-
+            this.Controls.Add(lineNumberBox);
         }
 
-        private void CreateTextBox()
+        /// <summary>
+        /// Creates and adds a textbox control for input text to the tab.
+        /// </summary>
+        private void LoadTextBox()
         {
             this.textBox = new TextBox();
             this.textBox.AcceptsTab = true;
@@ -86,21 +104,30 @@ namespace Bedit
             this.textBox.TabStop = false;
             this.textBox.WordWrap = false;
             this.textBox.TextChanged += new System.EventHandler(this.textBox_TextChanged);
-            
+            this.Controls.Add(textBox);
         }
 
+        /// <summary>
+        /// Occurs when the text in the editable textbox of the tab changes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void textBox_TextChanged(object sender, EventArgs e)
         {
-            //*********** distinguish saved from unsaved file
             this.saved = false;
-            this.ForeColor = System.Drawing.Color.Red;
+            tabControl.Invalidate();
 
-            if (NewLines(textBox.Text) + 1 > NUMBEROFLINESINTEXTBOX)
+            if (NumberOfNewLines(textBox.Text) + 1 > NUMBEROFLINESINTEXTBOX)
                 this.textBox.ScrollBars = ScrollBars.Vertical;
             undoStack.Push(textBox.Text);
         }
 
-        private int NewLines(string text)
+        /// <summary>
+        /// Returns the number of '\n' characters in a string.
+        /// </summary>
+        /// <param name="text">The input string.</param>
+        /// <returns></returns>
+        private int NumberOfNewLines(string text)
         {
             int newLines = 0;
             foreach (char c in text)

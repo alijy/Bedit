@@ -155,6 +155,7 @@ namespace Bedit
                     writer.Write(activeTab.textBox.Text);
                 }
                 activeTab.saved = true;
+                tabControl.Invalidate();
             }
         }
 
@@ -172,7 +173,7 @@ namespace Bedit
                     writer.Write(activeTab.textBox.Text);
                 }
                 stream.Close();
-
+                
                 #region alternative to above code
                 //using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.OpenOrCreate))
                 //{
@@ -338,54 +339,89 @@ namespace Bedit
 
         private void Menu_Close(object sender, EventArgs e)
         {
-            listOfTabs.Remove(activeTab);
-            tabControl.TabPages.Remove(activeTab);
-            WindowMenuDisplay();
-            if (listOfTabs.Count == 0)
-                activeTab = CreateNewTab(tabControl, null, null);
+            if (activeTab.saved ||
+                MessageBox.Show("Not saved. Proceed anyway?", "Usaved File Detected",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            {
+                listOfTabs.Remove(activeTab);
+                tabControl.TabPages.Remove(activeTab);
+                WindowMenuDisplay();
+                if (listOfTabs.Count == 0)
+                    activeTab = CreateNewTab(tabControl, null, null);
+            }
+        }
+
+        private bool AllSaved(int begin, int end, Tab actTab = null)
+        {
+            for (int i = begin; i <= end; i++)
+            {
+                if (!listOfTabs[i].Equals(actTab) && !listOfTabs[i].saved)
+                    return false;
+            }
+            return true;
         }
 
         private void Menu_CloseAll(object sender, EventArgs e)
         {
-            listOfTabs.Clear();
-            tabControl.TabPages.Clear();
-            WindowMenuDisplay();
-            activeTab = CreateNewTab(tabControl, null, null);
+            if (AllSaved(0, listOfTabs.Count - 1) ||
+                MessageBox.Show("Some files are not saved. Proceed anyway?", "Usaved File Detected",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            {
+                listOfTabs.Clear();
+                tabControl.TabPages.Clear();
+                WindowMenuDisplay();
+                activeTab = CreateNewTab(tabControl, null, null);
+            }
         }
 
         private void Menu_CloseAllButActive(object sender, EventArgs e)
         {
-            for (int i = listOfTabs.Count - 1 ; i >= 0 ; i--)
+            if (AllSaved(0, listOfTabs.Count - 1, activeTab) ||
+                MessageBox.Show("Some files are not saved. Proceed anyway?", "Usaved File Detected",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
-                if (listOfTabs[i] != activeTab)
+                for (int i = listOfTabs.Count - 1; i >= 0; i--)
                 {
-                    listOfTabs.Remove(listOfTabs[i]);
-                    tabControl.TabPages.RemoveAt(i);
+                    if (listOfTabs[i] != activeTab)
+                    {
+                        listOfTabs.Remove(listOfTabs[i]);
+                        tabControl.TabPages.RemoveAt(i);
+                    }
                 }
+                WindowMenuDisplay();
             }
-            WindowMenuDisplay();
         }
 
         private void Menu_CloseLeft(object sender, EventArgs e)
         {
             int indexOfActiveTab = listOfTabs.IndexOf(activeTab);
-            for (int i = indexOfActiveTab - 1 ; i >= 0 ; i--)
+            if (AllSaved(0, indexOfActiveTab - 1) ||
+                MessageBox.Show("Some files are not saved. Proceed anyway?", "Usaved File Detected",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
-                listOfTabs.RemoveAt(i);
-                tabControl.TabPages.RemoveAt(i);
+                for (int i = indexOfActiveTab - 1; i >= 0; i--)
+                {
+                    listOfTabs.RemoveAt(i);
+                    tabControl.TabPages.RemoveAt(i);
+                }
+                WindowMenuDisplay();
             }
-            WindowMenuDisplay();
         }
 
         private void Menu_CloseRight(object sender, EventArgs e)
         {
             int indexOfActiveTab = listOfTabs.IndexOf(activeTab);
-            for (int i = listOfTabs.Count - 1 ; i > indexOfActiveTab ; i--)
+            if (AllSaved(indexOfActiveTab + 1, listOfTabs.Count - 1) ||
+                MessageBox.Show("Some files are not saved. Proceed anyway?", "Usaved File Detected",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
-                listOfTabs.RemoveAt(i);
-                tabControl.TabPages.RemoveAt(i);
+                for (int i = listOfTabs.Count - 1; i > indexOfActiveTab; i--)
+                {
+                    listOfTabs.RemoveAt(i);
+                    tabControl.TabPages.RemoveAt(i);
+                }
+                WindowMenuDisplay();
             }
-            WindowMenuDisplay();
         }
 
         private void Menu_SelectAll(object sender, EventArgs e)
@@ -523,7 +559,10 @@ namespace Bedit
                 Rectangle imageRect = new Rectangle(rect.Right - closeImage.Width - 5, rect.Top + (rect.Height - closeImage.Height) / 2,
                     closeImage.Width, closeImage.Height);
 
-                if (imageRect.Contains(e.Location))
+                if (imageRect.Contains(e.Location) && 
+                    (listOfTabs[i].saved ||
+                    MessageBox.Show("Not saved. Proceed anyway?", "Usaved File Detected",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
                 {
                     activeTabStack.Pop();
                     while (activeTabStack.Count > 0 && !listOfTabs.Contains(activeTabStack.Peek()))
@@ -547,6 +586,12 @@ namespace Bedit
             Rectangle rect = tabControl.GetTabRect(e.Index);
             Rectangle imageRect = new Rectangle(rect.Right - closeImage.Width - 5, rect.Top + (rect.Height - closeImage.Height) / 2,
                 closeImage.Width, closeImage.Height);
+
+            if (!listOfTabs[e.Index].saved)
+            {
+                Brush tabBrush = Brushes.LightPink;
+                e.Graphics.FillRectangle(tabBrush, rect);
+            }
 
             Font font;
             Brush blackBrush = Brushes.Blue;
